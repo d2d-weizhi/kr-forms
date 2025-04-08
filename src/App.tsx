@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@progress/kendo-react-buttons';
 import kendoka from './kendoka.svg';
+import BasicForm from './components/BasicForm';
 
 function App() {
   const handleClick = React.useCallback(() => {
@@ -8,20 +9,8 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      <div className="App-header">
-        <img src={kendoka} className="App-logo" alt="kendoka" />
-        <div className="text-content k-rounded-lg">
-          Edit <code>src/App.tsx</code> and save to reload.
-        </div>
-        <Button
-          themeColor={'primary'}
-          size={"large"}
-          onClick={handleClick}
-        >
-          Learn KendoReact
-        </Button>
-      </div>
+    <div className="kr-forms-demo">
+      <BasicForm />
     </div>
   );
 }
