@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@progress/kendo-react-buttons';
 import kendoka from './kendoka.svg';
-import BasicForm from './components/BasicForm';
+import CompleteForm from './components/CompleteForm';
 
 function App() {
   const handleClick = React.useCallback(() => {
@@ -10,7 +10,7 @@ function App() {
 
   return (
     <div className="kr-forms-demo">
-      <BasicForm />
+      <CompleteForm />
     </div>
   );
 }

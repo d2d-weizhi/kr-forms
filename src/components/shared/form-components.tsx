@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import { FieldRenderProps, FieldWrapper } from '@progress/kendo-react-form';
 import { 
   Input,
@@ -547,4 +547,407 @@ export const FormAutoComplete = (fieldRenderProps: FieldRenderProps) => {
 	);
 };
 
-// Continue from ComboBox
+export const FormComboBox = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, ...others } = fieldRenderProps;
+	const editorRef = useRef<any>(null);
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorRef={editorRef}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<ComboBox
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					ref={editorRef}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					{...others}
+				/>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormMultiColumnComboBox = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, ...others } = fieldRenderProps;
+	const editorRef = useRef<any>(null);
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	const columns: Array<columnsInterface> = [
+		{ field: 'id', header: <span>header</span>, width: '100px' },
+		{ field: 'name', header: 'Name', width: '300px' },
+		{ field: 'position', header: 'Position', width: '300px' },
+	];
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorRef={editorRef}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<MultiColumnComboBox
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					ref={editorRef}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					columns={columns}
+					textField={'name'}
+					{...others}
+				/>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormMultiSelect = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, ...others } = fieldRenderProps;
+	const editorRef = useRef<any>(null);
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorRef={editorRef}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<MultiSelect
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					ref={editorRef}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					{...others}
+				/>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormDropDownTree = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, data, ...others } = fieldRenderProps;
+	const { value, selectField, expandField, dataItemKey, filter } = others;
+	const [expanded, setExpanded] = useState<Array<number>>([data[0][dataItemKey]]);
+	const treeData = useMemo(
+		() =>
+			processTreeData(
+				data,
+				{ expanded, value, filter },
+				{ selectField, expandField, dataItemKey, subItemsField: 'items' }
+			),
+		[data, expanded, value, filter, selectField, expandField, dataItemKey]
+	);
+	
+	const onExpandChange = useCallback(
+		(event: any) => setExpanded(expandedState(event.item, dataItemKey, expanded)),
+		[expanded, dataItemKey]
+	);
+	
+	const editorRef = useRef<any>(null);
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorRef={editorRef}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<DropDownTree
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					ref={editorRef}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					data={treeData}
+					onExpandChange={onExpandChange}
+					dataItemKey={others.dataItemKey}
+					textField={others.textField}
+					{...others}
+				/>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormDatePicker = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, hintDirection, ...others } = fieldRenderProps;
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<DatePicker
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					{...others}
+				/>
+				{showHint && (
+					<Hint id={hintId} direction={hintDirection}>
+						{hint}
+					</Hint>
+				)}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormDateTimePicker = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, ...others } = fieldRenderProps;
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<DateTimePicker
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					{...others}
+				/>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormTimePicker = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, ...others } = fieldRenderProps;
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				<div className="k-form-field-wrap">
+					<TimePicker
+						ariaLabelledBy={labelId}
+						ariaDescribedBy={`${hintId} ${errorId}`}
+						valid={valid}
+						id={id}
+						disabled={disabled}
+						{...others}
+					/>
+					{showHint && <Hint id={hintId}>{hint}</Hint>}
+					{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+				</div>
+			</Label>
+		</FieldWrapper>
+	);
+};
+
+export const FormDateInput = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, ...others } = fieldRenderProps;
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<DateInput
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					{...others}
+				/>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormDateRangePicker = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, wrapperStyle, ...others } = fieldRenderProps;
+	const editorRef = useRef<any>(null);
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	const labelId: string = label ? `${id}_label` : '';
+	
+	return (
+		<FieldWrapper style={wrapperStyle}>
+			<Label
+				id={labelId}
+				editorRef={editorRef}
+				editorId={id}
+				editorValid={valid}
+				editorDisabled={disabled}
+				className="k-form-label"
+			>
+				{label}
+			</Label>
+			<div className={'k-form-field-wrap'}>
+				<DateRangePicker
+					ariaLabelledBy={labelId}
+					ariaDescribedBy={`${hintId} ${errorId}`}
+					ref={editorRef}
+					valid={valid}
+					id={id}
+					disabled={disabled}
+					{...others}
+				/>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
+
+export const FormFloatingNumericTextBox = (fieldRenderProps: FieldRenderProps) => {
+	const { validationMessage, touched, label, id, valid, disabled, hint, optional, value, ...others } = fieldRenderProps;
+	
+	const showValidationMessage: string | false | null = touched && validationMessage;
+	const showHint: boolean = !showValidationMessage && hint;
+	const hintId: string = showHint ? `${id}_hint` : '';
+	const errorId: string = showValidationMessage ? `${id}_error` : '';
+	
+	return (
+		<FieldWrapper>
+			<div className={'k-form-field-wrap'}>
+				<FloatingLabel
+					optional={optional}
+					editorValue={value}
+					editorId={id}
+					editorValid={valid}
+					editorDisabled={disabled}
+					label={label}
+					labelClassName="k-form-label"
+				>
+					<NumericTextBox
+						ariaDescribedBy={`${hintId} ${errorId}`}
+						value={value}
+						valid={valid}
+						id={id}
+						disabled={disabled}
+						{...others}
+					/>
+				</FloatingLabel>
+				{showHint && <Hint id={hintId}>{hint}</Hint>}
+				{showValidationMessage && <Error id={errorId}>{validationMessage}</Error>}
+			</div>
+		</FieldWrapper>
+	);
+};
