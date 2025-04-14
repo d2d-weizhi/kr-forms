@@ -21,8 +21,12 @@ code {
   /* Initial flat state */
   box-shadow: 2px 2px 5px rgba(0,0,0,.1);
   width: 650px;
+  max-height: 75vh;
   padding: 25px;
   background-color: #fefefe;
+  overflow-y: auto;
+  scrollbar-width: 2%;
+  scrollbar-color: #006 rgba(200,200,200, .25);
   transition: box-shadow 0.2s ease;
 }
 
