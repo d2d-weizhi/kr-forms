@@ -20,7 +20,7 @@ code {
 .kr-forms-demo {
   /* Initial flat state */
   box-shadow: 2px 2px 5px rgba(0,0,0,.1);
-  width: 650px;
+  width: 600px;
   max-height: 75vh;
   padding: 25px;
   background-color: #fefefe;

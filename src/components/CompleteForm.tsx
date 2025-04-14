@@ -30,7 +30,7 @@ export default function CompleteForm() {
 		<Form
 			onSubmit={handleSubmit}
 			render={(formRenderProps: FormRenderProps) => (
-				<FormElement style={{ width: 650 }}>
+				<FormElement style={{ width: 550 }}>
 					<fieldset className={'k-form-fieldset'}>
 						 <legend className={'k-form-legend'}>BOOK YOUR DREAM VACATION TODAY</legend>
 						<Field
