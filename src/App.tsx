@@ -1,12 +1,10 @@
 import React from 'react';
-import { Button } from '@progress/kendo-react-buttons';
-import kendoka from './kendoka.svg';
-import DatePickersForm from './components/DatePickersForm';
+import FormValidation from './components/FormValidation';
 
 function App() {
   return (
     <div className="kr-forms-demo">
-      <DatePickersForm />
+      <FormValidation />
     </div>
   );
 }

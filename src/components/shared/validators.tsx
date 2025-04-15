@@ -77,7 +77,7 @@ export const formValidator = (values: any) => {
 	}
 
 	return {
-		VALIDATION_SUMMARY: 'Please fill in the following fields.',
+		'VALIDATION_SUMMARY': 'Please fill in the following fields.',
 		['username']: !userName ? 'User Name is required.' : '',
 		['email']: emailValue && emailRegex.test(emailValue) ? '' : 'Email is required and should be in a valid format.',
 	};
